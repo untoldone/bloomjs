@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>BloomJS Demo</title>
+		<script src="../src/bloom.js"></script>
+	</head>
+	<body>
+    <h1>BloomJS Demo</h1>
+    <p>The following is results from BloomAPI requests</p>
+    <code id="hello">
+    </code>
+		<script>
+      var bloomClient = new bloomjs.Client();
+
+      bloomClient.sources(function (error, response) {
+        if (error) return console.log(error.stack);
+        var source = response[0];
+        log('=== First available source');
+        log('Name: ' + source.source);
+        log('Last Checked for Updates: ' + source.checked);
+      });
+
+      bloomClient.search('usgov.hhs.npi', function (error, response, info) {
+        if (error) return console.log(error.stack);
+        log('=== First available NPI');
+        log('NPI: ' + response[0].npi);
+        log('Total NPIs: ' + info['meta']['rowCount']);
+      });
+
+      bloomClient.search('usgov.hhs.hcpcs', {
+        'code': 'C9289'
+      }, function (error, response) {
+        if (error) return console.log(error.stack);
+        log('=== HCPCS code found');
+        log('Code: ' + response[0].code);
+      });
+
+      bloomClient.search('usgov.hhs.hcpcs', {
+          'long_description': {
+            'prefix': 'ambula'
+          }
+        }, {
+          'offset': 0,
+          'limit': 10 
+        }, function (error, response) {
+          if (error) return console.log(error.stack);
+          log('=== HCPCS code starting with ambula');
+          log('Code: ' + response[0].code);
+        });
+
+      bloomClient.search('usgov.hhs.hcpcs', {
+        'code': ['L8410', 'C9289']  
+      }, function (error, response) {
+        if (error) return console.log(error.stack);
+        log('=== HCPCS code with codes L8410 or C9289'); 
+        log('Code: ' + response[0].code);
+        log('Code: ' + response[1].code);
+      });
+
+      function log(text) {
+        var textNode = document.createElement('div'),
+            elm = document.getElementById('hello');
+        
+        textNode.textContent = text;
+
+        elm.appendChild(textNode);
+      }
+
+    </script>
+  </body>
+</html>

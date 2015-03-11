@@ -1,0 +1,16 @@
+{
+	"name": "bloomjs",
+	"version": "0.0.1",
+	"homepage": "http://www.bloomapi.com",
+	"authors": [
+		"Michael M. Wasser"
+	],
+  "description": "BloomAPI javascript client.",
+	"main": "src/bloom.js",
+	"keywords": [
+    "physician",
+    "bloomapi",
+    "client"
+	],
+	"license": "MIT"
+}
