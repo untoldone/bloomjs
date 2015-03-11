@@ -8,7 +8,7 @@ A browser-based and node.js client to [BloomAPI](http://www.bloomapi.com).
 The following are steps to get BloomJS into your javascript-based project.
 
 ## Browser
-Place `dist/bloom.min.js` from the GitHub project or install it with bower via `bower install bloomjs` into your project in a location accessible from the web. Include it in your site with a script tag
+Place `dist/bloom.min.js` from the GitHub project or install it with bower (`bower install bloomjs`) into your project in a location accessible from the web. Include it in your site with a script tag
 
     <script src="js/bloom.min.js"></script>
 
@@ -27,10 +27,10 @@ Use it in your node project via
 `bloomjs.Client(<API Key OR options>);`
 
 * Returns: BloomJS Client Object
-* API Key expected to be string
-* Options object can have
-  * 'url': root url of BloomAPI (e.g. http://www.bloomapi.com/api)
-  * 'apiKey': API Key
+* `API Key` BloomAPI access key
+* `options` object can have the follow parameters
+  * `url` root url of BloomAPI (e.g. http://www.bloomapi.com/api)
+  * `apiKey` API Key
 
 ###BloomJS Client Object
 
@@ -133,7 +133,7 @@ This also specifies an offset and limit using the options parameter.
         console.log('Code: ' + response[1].code);
       });
 
-** Find a National Provider Identifier its NPI**
+**Find a National Provider Identifier its NPI**
 
     bloomClient.find('usgov.hhs.hcpcs', 1770707127, function (error, response) {
         if (error) return console.log(error.stack);
