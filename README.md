@@ -138,4 +138,5 @@ This also specifies an offset and limit using the options parameter.
     bloomClient.find('usgov.hhs.hcpcs', 1770707127, function (error, response) {
         if (error) return console.log(error.stack);
         console.log('=== NPI details for 1770707127');
+        console.log('NPI: ' + response.npi);
     });
