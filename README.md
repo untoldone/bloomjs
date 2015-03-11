@@ -14,7 +14,7 @@ Place `dist/bloom.min.js` from the GitHub project or install it with bower (`bow
 
 ## Node.js
 
-    npm install bloomjs
+    npm install bloom-js
 
 Use it in your node project via
 
