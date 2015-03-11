@@ -9,16 +9,17 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/untoldone/physician-complete.git"
+    "url": "https://github.com/untoldone/bloomjs.git"
   },
   "bugs": {
-    "url": "https://github.com/untoldone/physician-complete/issues"
+    "url": "https://github.com/untoldone/bloomjs/issues"
   },
   "author": {
     "name": "Michael M. Wasser",
     "url": "https://github.com/untoldone"
   },
   "homepage": "http://www.bloomapi.com",
+  "main": "src/bloom.js",
   "contributors": [
     {
       "name": "Michael M. Wasser",
