@@ -9,11 +9,11 @@
     };
 
     if (typeof options === "string") {
-      this.key = options;
+      this.apiKey = options;
     } else if (typeof options === "object" && options !== null) {
       
       if (typeof options.apiKey !== "undefined") {
-        this.key = options.apiKey;
+        this.apiKey = options.apiKey;
       }
 
       if (typeof options.url !== "undefined") {
@@ -47,7 +47,8 @@
     },
     search: function (source) {
       var options = {},
-          query, cb, parameters, callUrl;
+          parameters = "",
+          query, cb, callUrl;
 
       for (var optAttr in this.defaultOptions) { options[optAttr] = this.defaultOptions[optAttr]; }
       
@@ -105,12 +106,12 @@
         if (parameters.length > 0) {
           parameters += "&";
         }
-
+        
         parameters += "secret=" + this.apiKey;
       }
       
       callUrl = this.url + "/sources/" + source + "/" + id + (typeof parameters !== "undefined" ? "?" + parameters : "");
-      
+
       sendRequest(callUrl, function (err, result) {
         if (err) {
           return cb(err);
@@ -123,7 +124,7 @@
 
   var uniqueJSONP = 0;
   function sendRequest(fullUrl, callback) {
-    var agent = "BloomJS/0.0.1";
+    var agent = "BloomJS/0.0.2";
 
     if (typeof window !== "undefined") {
       // Assume in browser
