@@ -1,5 +1,5 @@
 /*
- *  bloomjs - v0.0.1
+ *  bloom-js - v0.0.1
  *  API Client for BloomAPI.
  *  http://www.bloomapi.com
  *
