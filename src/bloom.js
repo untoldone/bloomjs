@@ -157,7 +157,8 @@
       // Assume in nodejs
       var http = require("http"),
           https = require("https"),
-          url  = require("url");
+          url  = require("url"),
+          zlib = require("zlib");
 
       var parsed, protocol;
 
@@ -167,28 +168,56 @@
 
       protocol.get({
         headers: {
-          "User-Agent": agent
+          "User-Agent": agent,
+          "Accept-Encoding": "gzip,deflate"
         },
         hostname: parsed.hostname,
         port: parsed.port,
         path: parsed.path
       }, function (res) {
-        var body = "";
+        var body = [];
 
         if (res.statusCode !== 200 && res.statusCode !== 304) {
           return callback(new Error("Non-OK http return: " + res.statusCode));
         }
 
         res.on("data", function (d) {
-          body += d;
+          body.push(d);
         });
 
         res.on("end", function () {
-          try {
-            var result = JSON.parse(body);
-            callback(null, result);
-          } catch (e) {
-            return callback(e);
+          var buffer = Buffer.concat(body),
+              encoding = res.headers["content-encoding"],
+              contents;
+
+          if (encoding === "gzip") {
+            zlib.gunzip(buffer, function (err, contents) {
+              try {
+                var result = JSON.parse(contents);
+                callback(null, result);
+              } catch (e) {
+                return callback(e);
+              }
+            });
+          } else if (encoding === "deflate") {
+            zlib.inflate(buffer, function (err, contents) {
+              console.log("THERE");
+              try {
+                var result = JSON.parse(contents);
+                callback(null, result);
+              } catch (e) {
+                return callback(e);
+              }
+            });
+          } else {
+            contents = buffer.toString();
+
+            try {
+              var result = JSON.parse(contents);
+              callback(null, result);
+            } catch (e) {
+              return callback(e);
+            }
           }
         });
       }).on("error", function (e) {
