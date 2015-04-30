@@ -132,7 +132,7 @@
 
   var uniqueJSONP = 0;
   function sendRequest(fullUrl, callback) {
-    var agent = "BloomJS/0.0.2";
+    var agent = "BloomJS/0.0.4";
 
     if (typeof window !== "undefined") {
       // Assume in browser
@@ -181,7 +181,8 @@
         },
         hostname: parsed.hostname,
         port: parsed.port,
-        path: parsed.path
+        path: parsed.path,
+        agent: false
       }, function (res) {
         var body = [];
 
@@ -209,7 +210,6 @@
             });
           } else if (encoding === "deflate") {
             zlib.inflate(buffer, function (err, contents) {
-              console.log("THERE");
               try {
                 var result = JSON.parse(contents);
                 callback(null, result);
