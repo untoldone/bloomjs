@@ -1,3 +1,8 @@
+0.0.4 / 2015-04-30
+==================
+
+  * Removes use of Node.js connection pooling as temporary fix to bad sockets bug
+
 0.0.3 / 2015-03-18
 ==================
 
