@@ -124,7 +124,7 @@
 
   var uniqueJSONP = 0;
   function sendRequest(fullUrl, callback) {
-    var agent = "BloomJS/0.0.4";
+    var agent = "BloomJS/0.0.5";
 
     if (typeof window !== "undefined") {
       // Assume in browser
@@ -193,31 +193,40 @@
 
           if (encoding === "gzip") {
             zlib.gunzip(buffer, function (err, contents) {
+              var result;
+
               try {
-                var result = JSON.parse(contents);
-                callback(null, result);
+                result = JSON.parse(contents);
               } catch (e) {
                 return callback(e);
               }
+              
+              callback(null, result);
             });
           } else if (encoding === "deflate") {
             zlib.inflate(buffer, function (err, contents) {
+              var result;
+
               try {
-                var result = JSON.parse(contents);
-                callback(null, result);
+                result = JSON.parse(contents);
               } catch (e) {
                 return callback(e);
               }
+              
+              callback(null, result);
             });
           } else {
+            var result;
+
             contents = buffer.toString();
 
             try {
-              var result = JSON.parse(contents);
-              callback(null, result);
+              result = JSON.parse(contents);
             } catch (e) {
               return callback(e);
             }
+            
+            callback(null, result);
           }
         });
       }).on("error", function (e) {
