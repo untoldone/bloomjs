@@ -106,6 +106,35 @@ The following will work on both the browser (using JSONP behind the scenes) and 
         console.log('Code: ' + response[0].code);
       });
 
+**Page through search results**
+
+      var bloomjs = require('bloom-js');
+      var bloomClient = new bloomjs.Client();
+
+      function searchAll(dataset, query, cb) {
+        var offset = 0;
+
+        (function searchMore(aggregate) {
+          bloomClient.search(dataset, query, { 'offset': offset, 'limit': 100 }, function (err, data, info) {
+            if (err) return cb(err);
+
+            data = data.concat(aggregate);
+
+            if (info.meta.rowCount > data.length) {
+              offset += 100;
+              searchMore(data);
+            } else {
+              cb(null, data);
+            }
+          });
+        })([]);
+      };
+
+      searchAll('usgov.hhs.npi', {'last_name': 'murillo'}, function (err, results) {
+        if (err) console.log(err.stack);
+        console.log(results.length);
+      });
+
 **Search HCPCS Procedure Codes for any code with word that starts with 'ambula' in the description'**
 This also specifies an offset and limit using the options parameter.
 
