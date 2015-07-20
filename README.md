@@ -151,6 +151,21 @@ This also specifies an offset and limit using the options parameter.
           console.log('Code: ' + response[0].code);
         });
 
+**Search for HCPCS codes with both the prefix 'ambula' and another word 'emer'**
+
+      bloomClient.search('usgov.hhs.hcpcs', [
+          {
+            'long_description': { 'prefix': 'ambula' }
+          },
+          {
+            'long_description': { 'prefix': 'emer' }
+          }
+        ], function (error, response, info) {
+          if (error) return console.log(error.stack);
+          console.log('=== HCPCS code starting with ambula AND emer');
+          console.log('Code: ' + response[0].code);
+        });
+
 **Search HCPCS for both code 'L8410' and 'C9289' (Logical OR)**
 
       bloomClient.search('usgov.hhs.hcpcs', {

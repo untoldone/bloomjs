@@ -1,5 +1,5 @@
 /*
- *  bloom-js - v0.0.3
+ *  bloom-js - v0.0.6
  *  API Client for BloomAPI.
  *  http://www.bloomapi.com
  *
@@ -132,7 +132,7 @@
 
   var uniqueJSONP = 0;
   function sendRequest(fullUrl, callback) {
-    var agent = "BloomJS/0.0.4";
+    var agent = "BloomJS/0.0.5";
 
     if (typeof window !== "undefined") {
       // Assume in browser
@@ -201,31 +201,40 @@
 
           if (encoding === "gzip") {
             zlib.gunzip(buffer, function (err, contents) {
+              var result;
+
               try {
-                var result = JSON.parse(contents);
-                callback(null, result);
+                result = JSON.parse(contents);
               } catch (e) {
                 return callback(e);
               }
+              
+              callback(null, result);
             });
           } else if (encoding === "deflate") {
             zlib.inflate(buffer, function (err, contents) {
+              var result;
+
               try {
-                var result = JSON.parse(contents);
-                callback(null, result);
+                result = JSON.parse(contents);
               } catch (e) {
                 return callback(e);
               }
+              
+              callback(null, result);
             });
           } else {
+            var result;
+
             contents = buffer.toString();
 
             try {
-              var result = JSON.parse(contents);
-              callback(null, result);
+              result = JSON.parse(contents);
             } catch (e) {
               return callback(e);
             }
+            
+            callback(null, result);
           }
         });
       }).on("error", function (e) {
@@ -236,56 +245,115 @@
 
   function toParameters (query) {
     var parameters = "",
-        index = 1;
+        index = 1,
+        key, orIndex, values, op;
 
-    for (var key in query) {
-      if (parameters.length > 0) {
-        parameters += "&";
-      }
+    if (query instanceof Array) {
+      var queryPart = 0;
+      for(; queryPart < query.length; queryPart++) {
+        var subQuery = query[queryPart];
 
-      if (typeof query[key] === "string") {
-        parameters += "key" + index + "=" + key;
-        parameters += "&op" + index + "=eq";
-        parameters += "&value" + index + "=" + query[key];
+        for (key in subQuery) {
+          if (parameters.length > 0) {
+            parameters += "&";
+          }
 
-        index += 1;
-      } else if (query[key] instanceof Array) {
-        var orIndex = 0,
-            values = query[key];
-
-        parameters += "key" + index + "=" + key;
-        parameters += "&op" + index + "=eq";
-        
-        for (; orIndex < values.length; orIndex += 1) {
-          parameters += "&value" + index + "=" + values[orIndex];
-        }
-
-        index += 1;
-      } else if (typeof query[key] === "object" && typeof query[key] !== null) {
-        for (var op in query[key]) {
-          if (typeof query[key][op] === "string") {
+          if (typeof subQuery[key] === "string") {
             parameters += "key" + index + "=" + key;
-            parameters += "&op" + index + "=" + op;
-            parameters += "&value" + index + "=" + query[key][op];
+            parameters += "&op" + index + "=eq";
+            parameters += "&value" + index + "=" + subQuery[key];
 
             index += 1;
-          } else if (query[key][op] instanceof Array) {
-            var nestOrIndex = 0,
-                nestValues = query[key][op];
-            parameters += "key" + index + "=" + key;
-            parameters += "&op" + index + "=" + op;
+          } else if (subQuery[key] instanceof Array) {
+            orIndex = 0;
+            values = subQuery[key];
 
-            for (; nestOrIndex < nestValues.length; nestOrIndex += 1) {
-              parameters += "&value" + index + "=" + nestValues[nestOrIndex];
+            parameters += "key" + index + "=" + key;
+            parameters += "&op" + index + "=eq";
+            
+            for (; orIndex < values.length; orIndex += 1) {
+              parameters += "&value" + index + "=" + values[orIndex];
             }
 
             index += 1;
+          } else if (typeof subQuery[key] === "object" && typeof subQuery[key] !== null) {
+            for (op in subQuery[key]) {
+              if (typeof subQuery[key][op] === "string") {
+                parameters += "key" + index + "=" + key;
+                parameters += "&op" + index + "=" + op;
+                parameters += "&value" + index + "=" + subQuery[key][op];
+
+                index += 1;
+              } else if (subQuery[key][op] instanceof Array) {
+                nestOrIndex = 0;
+                nestValues = subQuery[key][op];
+                parameters += "key" + index + "=" + key;
+                parameters += "&op" + index + "=" + op;
+
+                for (; nestOrIndex < nestValues.length; nestOrIndex += 1) {
+                  parameters += "&value" + index + "=" + nestValues[nestOrIndex];
+                }
+
+                index += 1;
+              } else {
+                throw new Error("Unexpected query structure");
+              }
+            }
           } else {
             throw new Error("Unexpected query structure");
           }
         }
-      } else {
-        throw new Error("Unexpected query structure");
+      }
+    } else {
+      for (key in query) {
+        if (parameters.length > 0) {
+          parameters += "&";
+        }
+
+        if (typeof query[key] === "string") {
+          parameters += "key" + index + "=" + key;
+          parameters += "&op" + index + "=eq";
+          parameters += "&value" + index + "=" + query[key];
+
+          index += 1;
+        } else if (query[key] instanceof Array) {
+          orIndex = 0;
+          values = query[key];
+
+          parameters += "key" + index + "=" + key;
+          parameters += "&op" + index + "=eq";
+          
+          for (; orIndex < values.length; orIndex += 1) {
+            parameters += "&value" + index + "=" + values[orIndex];
+          }
+
+          index += 1;
+        } else if (typeof query[key] === "object" && typeof query[key] !== null) {
+          for (op in query[key]) {
+            if (typeof query[key][op] === "string") {
+              parameters += "key" + index + "=" + key;
+              parameters += "&op" + index + "=" + op;
+              parameters += "&value" + index + "=" + query[key][op];
+
+              index += 1;
+            } else if (query[key][op] instanceof Array) {
+              nestOrIndex = 0;
+              nestValues = query[key][op];
+              parameters += "key" + index + "=" + key;
+              parameters += "&op" + index + "=" + op;
+
+              for (; nestOrIndex < nestValues.length; nestOrIndex += 1) {
+                parameters += "&value" + index + "=" + nestValues[nestOrIndex];
+              }
+
+              index += 1;
+            } else {
+              throw new Error("Unexpected query structure");
+            }
+          }
+        } else {
+          throw new Error("Unexpected query structure");
+        }
       }
     }
 

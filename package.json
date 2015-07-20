@@ -1,6 +1,6 @@
 {
   "name": "bloom-js",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "API Client for BloomAPI.",
   "keywords": [
     "physician",

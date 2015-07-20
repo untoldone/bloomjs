@@ -1,3 +1,8 @@
+0.0.6 / 2015-07-19
+==================
+
+  * Adds support for logical AND using same parameter name
+
 0.0.4 / 2015-04-30
 ==================
 
