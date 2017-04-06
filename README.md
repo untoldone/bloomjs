@@ -32,7 +32,7 @@ Use it in your node project via
   * `url` root url of BloomAPI (e.g. http://www.bloomapi.com/api)
   * `apiKey` API Key
 
-###BloomJS Client Object
+### BloomJS Client Object
 
 `bloomClient.sources(<callback>)`
 * Returns nothing
